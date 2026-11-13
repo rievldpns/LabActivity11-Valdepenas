@@ -66,6 +66,7 @@
                 <input type="checkbox" name="is_published" value="1" @checked(old('is_published'))>
                 Publish now
             </label>
+            <p class="text-xs text-slate-500 mt-1">Leave unchecked to save as a draft. Drafts won't show on the bulletin.</p>
             @error('is_published') <p class="text-red-600 text-xs mt-1">{{ $message }}</p> @enderror
         </div>
 
