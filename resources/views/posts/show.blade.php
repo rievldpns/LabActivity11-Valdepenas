@@ -30,6 +30,37 @@
     <section class="mt-6">
         <h2 class="text-lg font-semibold mb-3">Comments ({{ $post->comments->count() }})</h2>
 
+        @auth
+            @if ($errors->any())
+                <div class="mb-3 bg-red-100 border border-red-300 text-red-800 text-sm rounded px-4 py-3">
+                    <p class="font-semibold mb-1">Please fix the following:</p>
+                    <ul class="list-disc list-inside">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
+            <form method="POST" action="{{ route('comments.store', $post) }}" class="bg-white rounded shadow p-4 mb-4">
+                @csrf
+                <label for="body" class="block text-xs font-semibold text-slate-600 uppercase mb-1">Add a comment</label>
+                <textarea id="body" name="body" rows="3"
+                          class="w-full border border-slate-300 rounded p-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400">{{ old('body') }}</textarea>
+                @error('body')
+                    <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
+                @enderror
+
+                <button type="submit" class="mt-2 bg-sky-600 hover:bg-sky-700 text-white text-sm rounded px-4 py-2">Post comment</button>
+            </form>
+        @endauth
+
+        @guest
+            <p class="bg-white rounded shadow p-4 mb-4 text-sm">
+                <a href="{{ route('login') }}" class="text-sky-600 hover:underline">Sign in to comment</a>
+            </p>
+        @endguest
+
         <div class="space-y-3">
             @forelse ($post->comments as $comment)
                 <div class="bg-white rounded shadow p-3">

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StorePostRequest;
 use App\Models\Post;
 use App\Models\Tag;
 use Illuminate\Http\Request;
@@ -37,6 +38,37 @@ class PostController extends Controller
         $tags = Tag::orderBy('name')->pluck('name');
 
         return view('posts.index', compact('posts', 'categories', 'tags'));
+    }
+
+    public function create(Request $request)
+    {
+        // residents have no author profile, so no new posts for them
+        abort_unless($request->user()->author, 403);
+
+        return view('posts.create', [
+            'tags' => Tag::orderBy('name')->get(),
+            'categories' => Post::CATEGORIES,
+        ]);
+    }
+
+    public function store(StorePostRequest $request)
+    {
+        $data = $request->validated();
+
+        $tagIds = $data['tags'];
+        unset($data['tags']);
+
+        $data['is_published'] = $request->boolean('is_published');
+        $data['published_at'] = $data['is_published'] ? now() : null;
+
+        $post = $request->user()->author->posts()->create($data);
+        $post->tags()->sync($tagIds);
+
+        if ($post->is_published) {
+            return redirect()->route('posts.show', $post)->with('status', 'Post published.');
+        }
+
+        return redirect()->route('posts.index')->with('status', 'Draft saved.');
     }
 
     public function show($id)

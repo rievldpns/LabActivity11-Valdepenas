@@ -20,6 +20,12 @@
                 </a>
 
                 @auth
+                    @if (auth()->user()->author)
+                        <a href="{{ route('posts.create') }}" class="bg-white text-sky-600 hover:bg-sky-50 text-sm font-semibold rounded px-3 py-1 transition-colors">
+                            New post
+                        </a>
+                    @endif
+
                     <span class="text-sm text-sky-100">{{ auth()->user()->name }}</span>
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf

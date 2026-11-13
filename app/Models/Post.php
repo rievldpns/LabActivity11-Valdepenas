@@ -12,6 +12,8 @@ class Post extends Model
 {
     use HasFactory;
 
+    public const CATEGORIES = ['Ayuda', 'Education', 'Announcement', 'Health', 'Peace & Order'];
+
     protected $fillable = [
         'author_id', 'title', 'category', 'body',
         'is_published', 'is_pinned', 'published_at', 'views',
